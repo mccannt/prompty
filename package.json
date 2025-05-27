@@ -1,0 +1,24 @@
+{
+  "name": "prompty",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "A modern prompt library for engineering teams, with CRUD + lock, tags, dark/light theme, and Docker deployment.",
+  "main": "add_sample_prompts.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mccannt/prompty.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/mccannt/prompty/issues"
+  },
+  "homepage": "https://github.com/mccannt/prompty#readme",
+  "dependencies": {
+    "axios": "^1.9.0"
+  }
+}
