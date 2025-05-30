@@ -113,7 +113,7 @@ Thumbs.db
 *.sqlite
 *.sqlite3
 *.db
-backend/data/*.sqlite
+# backend/data/*.sqlite  # Comment out to allow main database
 backend/data/*.db
 
 # SSL certificates and keys
@@ -313,4 +313,7 @@ database-export.json
 database-backup-*.sqlite
 *.sql
 database-export-*.json
-database-backup-*.json 
+database-backup-*.json
+
+# But allow the main database file
+!backend/data/db.sqlite 
