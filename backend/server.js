@@ -2,6 +2,7 @@ import express from "express";
 import cors from "cors";
 import sqlite3 from "sqlite3";
 import { open } from "sqlite";
+import { COMPREHENSIVE_PROMPTS } from "./comprehensive-prompts.js";
 
 const app = express();
 app.use(cors());
@@ -9,7 +10,7 @@ app.use(express.json());
 
 let db;
 const start = async () => {
-  db = await open({ filename: "./db.sqlite", driver: sqlite3.Database });
+  db = await open({ filename: "./data/db.sqlite", driver: sqlite3.Database });
 
   await db.exec(`
     CREATE TABLE IF NOT EXISTS prompts (
@@ -24,46 +25,23 @@ const start = async () => {
   // Seed if empty
   const row = await db.get("SELECT COUNT(*) as count FROM prompts");
   if (row.count === 0) {
-    await db.run(
-      "INSERT INTO prompts (title, body, tags, locked) VALUES (?, ?, ?, ?)",
-      [
-        "Create a Unit Test",
-        "Write a unit test for the following function. Use Jest.\n\nfunction add(a, b) { return a + b; }",
-        "Technical,Testing,Engineering",
-        1
-      ]
-    );
-    await db.run(
-      "INSERT INTO prompts (title, body, tags, locked) VALUES (?, ?, ?, ?)",
-      [
-        "Draft a Sprint Retrospective Summary",
-        "Summarize the following sprint retrospective into three key action items and a short summary paragraph.",
-        "Non-Technical,Agile,Meetings",
-        0
-      ]
-    );
-    await db.run(
-      "INSERT INTO prompts (title, body, tags, locked) VALUES (?, ?, ?, ?)",
-      [
-        "Jira Bug Report Template",
-        "Create a Jira bug report template for the following defect.\nSteps to Reproduce:\nExpected Result:\nActual Result:\nEnvironment:",
-        "Technical,Jira,Bug",
-        1
-      ]
-    );
-    await db.run(
-      "INSERT INTO prompts (title, body, tags, locked) VALUES (?, ?, ?, ?)",
-      [
-        "Team Announcement",
-        "Draft a brief Slack announcement for the team regarding the new remote work policy. Tone: friendly and concise.",
-        "Non-Technical,HR,Slack",
-        0
-      ]
-    );
+    console.log("Seeding database with comprehensive prompts...");
+    for (const prompt of COMPREHENSIVE_PROMPTS) {
+      await db.run(
+        "INSERT INTO prompts (title, body, tags, locked) VALUES (?, ?, ?, ?)",
+        [prompt.title, prompt.body, prompt.tags, prompt.locked]
+      );
+    }
+    console.log(`Seeded ${COMPREHENSIVE_PROMPTS.length} prompts successfully!`);
   }
 };
 
 await start();
+
+// Health check endpoint
+app.get("/api/health", (req, res) => {
+  res.status(200).json({ status: "healthy", timestamp: new Date().toISOString() });
+});
 
 // API routes
 app.get("/api/prompts", async (req, res) => {

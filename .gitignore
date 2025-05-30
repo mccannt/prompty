@@ -284,4 +284,25 @@ tramp
 
 # Local development overrides
 .local/
-local/ 
+local/
+
+# Temporary script files
+add_*.js
+temp_*.js
+quick_*.js
+test_*.js
+restore_*.js
+final_*.js
+
+# Kubernetes build artifacts
+k8s/generated/
+k8s/secrets/
+k8s/*.secret.yaml
+k8s/*.secret.yml
+
+# Helm charts generated files
+*.tgz
+charts/
+
+# Container registry credentials
+.docker/config.json 

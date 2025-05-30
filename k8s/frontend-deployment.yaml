@@ -1,0 +1,75 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: prompty-frontend
+  namespace: prompty
+  labels:
+    app: prompty
+    component: frontend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: prompty
+      component: frontend
+  template:
+    metadata:
+      labels:
+        app: prompty
+        component: frontend
+    spec:
+      containers:
+      - name: frontend
+        image: prompty-frontend:latest
+        imagePullPolicy: Never  # For local development
+        ports:
+        - containerPort: 3000
+          name: http
+        env:
+        - name: VITE_API_BASE
+          valueFrom:
+            configMapKeyRef:
+              name: prompty-config
+              key: VITE_API_BASE
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 3000
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          timeoutSeconds: 5
+          failureThreshold: 3
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 3000
+          initialDelaySeconds: 5
+          periodSeconds: 5
+          timeoutSeconds: 3
+          failureThreshold: 3
+        resources:
+          requests:
+            memory: "128Mi"
+            cpu: "100m"
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: prompty-frontend
+  namespace: prompty
+  labels:
+    app: prompty
+    component: frontend
+spec:
+  selector:
+    app: prompty
+    component: frontend
+  ports:
+  - name: http
+    port: 3000
+    targetPort: 3000
+    protocol: TCP
+  type: ClusterIP 

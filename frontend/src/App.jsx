@@ -9,7 +9,7 @@ const TAGS = [
   "Code Review", "Documentation", "Infrastructure", "Design", "Optimization",
   "Unit Tests", "Integration Tests", "Debugging", "Refactoring", "Git", "Version Control",
   "Error Handling", "README", "Code Comments", "Migration", "Configuration", "Logging",
-  "Monitoring", "Code Quality", "Troubleshooting", "Reliability", "Setup"
+  "Monitoring", "Code Quality", "Troubleshooting", "Reliability", "Setup", "Web Dev"
 ];
 
 const THEMES = {
@@ -130,7 +130,7 @@ function PromptCard({ prompt, onEdit, onDelete, onToggleLock, onView, theme }) {
   return (
     <div 
       className={classNames(
-        "group relative rounded-xl border-2 bg-white p-6 shadow-sm hover:shadow-lg transition-all duration-300 cursor-pointer transform hover:-translate-y-1",
+        "group relative rounded-xl border-2 bg-white dark:bg-gray-800 p-6 shadow-sm hover:shadow-lg transition-all duration-300 cursor-pointer transform hover:-translate-y-1",
         theme.colors.card
       )}
       onClick={() => onView(prompt)}
@@ -149,12 +149,12 @@ function PromptCard({ prompt, onEdit, onDelete, onToggleLock, onView, theme }) {
               {prompt.locked ? (
                 <>
                   <span className="text-red-500">🔒</span>
-                  <span className="text-red-600 font-medium">Protected</span>
+                  <span className="text-red-600 dark:text-red-400 font-medium">Protected</span>
                 </>
               ) : (
                 <>
                   <span className="text-green-500">🔓</span>
-                  <span className="text-green-600 font-medium">Editable</span>
+                  <span className="text-green-600 dark:text-green-400 font-medium">Editable</span>
                 </>
               )}
             </span>
@@ -167,8 +167,8 @@ function PromptCard({ prompt, onEdit, onDelete, onToggleLock, onView, theme }) {
             className={classNames(
               "p-2 text-sm rounded-lg transition-colors",
               prompt.locked
-                ? "bg-gray-100 text-gray-400 cursor-not-allowed"
-                : "bg-red-50 text-red-600 hover:bg-red-100"
+                ? "bg-gray-100 dark:bg-gray-700 text-gray-400 dark:text-gray-500 cursor-not-allowed"
+                : "bg-red-50 dark:bg-red-900/30 text-red-600 dark:text-red-400 hover:bg-red-100 dark:hover:bg-red-900/50"
             )}
             onClick={handleDelete}
             title={prompt.locked ? "Unlock before deleting" : "Delete prompt"}
@@ -179,7 +179,7 @@ function PromptCard({ prompt, onEdit, onDelete, onToggleLock, onView, theme }) {
             className={classNames(
               "p-2 text-sm rounded-lg transition-colors",
               prompt.locked
-                ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                ? "bg-gray-100 dark:bg-gray-700 text-gray-400 dark:text-gray-500 cursor-not-allowed"
                 : theme.colors.secondary
             )}
             onClick={handleEdit}
@@ -191,8 +191,8 @@ function PromptCard({ prompt, onEdit, onDelete, onToggleLock, onView, theme }) {
             className={classNames(
               "p-2 text-sm rounded-lg transition-colors",
               prompt.locked
-                ? "bg-yellow-50 text-yellow-600 hover:bg-yellow-100"
-                : "bg-gray-50 text-gray-600 hover:bg-gray-100"
+                ? "bg-yellow-50 dark:bg-yellow-900/30 text-yellow-600 dark:text-yellow-400 hover:bg-yellow-100 dark:hover:bg-yellow-900/50"
+                : "bg-gray-50 dark:bg-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-600"
             )}
             onClick={() => onToggleLock(prompt)}
             title={prompt.locked ? "Unlock prompt to enable editing" : "Lock prompt to protect from changes"}
@@ -204,7 +204,7 @@ function PromptCard({ prompt, onEdit, onDelete, onToggleLock, onView, theme }) {
 
       {/* Content Preview */}
       <div className="mb-4">
-        <div className="text-gray-700 leading-relaxed">
+        <div className="text-gray-700 dark:text-gray-300 leading-relaxed">
           {prompt.body.length > 120 
             ? `${prompt.body.substring(0, 120)}...` 
             : prompt.body
@@ -231,7 +231,7 @@ function PromptCard({ prompt, onEdit, onDelete, onToggleLock, onView, theme }) {
           </span>
         ))}
         {(prompt.tags || "").split(",").filter(tag => tag.trim()).length > 3 && (
-          <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-600 border border-gray-200">
+          <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 border border-gray-200 dark:border-gray-600">
             +{(prompt.tags || "").split(",").filter(tag => tag.trim()).length - 3} more
           </span>
         )}
@@ -239,7 +239,7 @@ function PromptCard({ prompt, onEdit, onDelete, onToggleLock, onView, theme }) {
 
       {/* Click indicator */}
       <div className="absolute bottom-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity">
-        <div className="text-xs text-gray-400 flex items-center gap-1">
+        <div className="text-xs text-gray-400 dark:text-gray-500 flex items-center gap-1">
           <span>Click to view</span>
           <span className={theme.colors.accent}>→</span>
         </div>
@@ -255,19 +255,19 @@ function PromptForm({ prompt, onSave, onCancel, theme }) {
   
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black/50 z-50">
-      <div className="bg-white rounded-xl shadow-xl w-full max-w-2xl mx-4 max-h-[90vh] overflow-auto">
+      <div className="bg-white dark:bg-gray-800 rounded-xl shadow-xl w-full max-w-2xl mx-4 max-h-[90vh] overflow-auto">
         <div className="p-6">
-          <h2 className="text-2xl font-bold text-gray-900 mb-6">
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">
             {prompt ? "Edit Prompt" : "Create New Prompt"}
           </h2>
           
           <div className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 Title
               </label>
               <input
-                className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+                className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
                 placeholder="Enter prompt title..."
                 value={form.title}
                 onChange={e => setForm({ ...form, title: e.target.value })}
@@ -275,11 +275,11 @@ function PromptForm({ prompt, onSave, onCancel, theme }) {
             </div>
             
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 Prompt Content
               </label>
               <textarea
-                className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+                className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
                 placeholder="Enter your prompt content..."
                 value={form.body}
                 rows={6}
@@ -288,11 +288,11 @@ function PromptForm({ prompt, onSave, onCancel, theme }) {
             </div>
             
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 Tags
               </label>
               <input
-                className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+                className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
                 placeholder="Enter tags separated by commas..."
                 value={form.tags}
                 onChange={e => setForm({ ...form, tags: e.target.value })}
@@ -305,18 +305,18 @@ function PromptForm({ prompt, onSave, onCancel, theme }) {
                 id="locked"
                 checked={form.locked}
                 onChange={e => setForm({ ...form, locked: e.target.checked })}
-                className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700"
               />
-              <label htmlFor="locked" className="ml-2 text-sm text-gray-700">
+              <label htmlFor="locked" className="ml-2 text-sm text-gray-700 dark:text-gray-300">
                 🔒 Lock prompt (prevents editing/deletion until unlocked)
               </label>
             </div>
           </div>
           
-          <div className="flex justify-end gap-3 mt-6 pt-6 border-t border-gray-200">
+          <div className="flex justify-end gap-3 mt-6 pt-6 border-t border-gray-200 dark:border-gray-700">
             <button 
               onClick={onCancel} 
-              className="px-6 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors"
+              className="px-6 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
             >
               Cancel
             </button>
@@ -343,24 +343,24 @@ function ThemeSelector({ currentTheme, onThemeChange }) {
   return (
     <div className="relative">
       <button
-        className="p-2 rounded-lg text-xl hover:bg-gray-100 transition-colors"
+        className="p-2 rounded-lg text-xl hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
         onClick={() => setIsOpen(!isOpen)}
         title="Change color theme"
       >
         🎨
       </button>
       {isOpen && (
-        <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 z-50">
+        <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 z-50">
           <div className="p-2">
-            <div className="text-sm font-medium text-gray-700 mb-2 px-2">Color Theme</div>
+            <div className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 px-2">Color Theme</div>
             {Object.entries(THEMES).map(([key, theme]) => (
               <button
                 key={key}
                 className={classNames(
                   "w-full text-left px-3 py-2 rounded-md text-sm transition-colors flex items-center gap-2",
                   currentTheme === key
-                    ? "bg-gray-100 text-gray-900"
-                    : "text-gray-700 hover:bg-gray-50"
+                    ? "bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white"
+                    : "text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700"
                 )}
                 onClick={() => {
                   onThemeChange(key);
@@ -475,6 +475,7 @@ export default function App() {
   const [editing, setEditing] = useState(null);
   const [viewing, setViewing] = useState(null);
   const [filter, setFilter] = useState("All");
+  const [searchQuery, setSearchQuery] = useState("");
   const [dark, setDark] = useState(() => localStorage.getItem("theme") === "dark");
   const [currentTheme, setCurrentTheme] = useState(() => localStorage.getItem("colorTheme") || "red");
   const [showAllTags, setShowAllTags] = useState(false);
@@ -547,22 +548,30 @@ export default function App() {
     }
   };
 
-  const filteredPrompts =
-    filter === "All"
-      ? prompts
-      : prompts.filter((p) =>
-          (p.tags || "")
-            .split(",")
-            .map((t) => t.trim())
-            .includes(filter)
-        );
+  const filteredPrompts = prompts.filter((prompt) => {
+    // First filter by tag
+    const matchesTag = filter === "All" || 
+      (prompt.tags || "")
+        .split(",")
+        .map((t) => t.trim())
+        .includes(filter);
+    
+    // Then filter by search query
+    const matchesSearch = searchQuery === "" ||
+      prompt.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      prompt.body.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      (prompt.tags || "").toLowerCase().includes(searchQuery.toLowerCase());
+    
+    return matchesTag && matchesSearch;
+  });
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       {/* Header */}
-      <header className="bg-white border-b border-gray-200 shadow-sm">
+      <header className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 shadow-sm">
         <div className="max-w-7xl mx-auto px-6 py-4">
-          <div className="flex items-center justify-between">
+          {/* Top row with logo, title and buttons */}
+          <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-4">
               <img 
                 src="/images/bold-logo-red.svg" 
@@ -570,12 +579,13 @@ export default function App() {
                 className="h-12 w-auto"
               />
               <div>
-                <h1 className="text-3xl font-bold text-gray-900">
+                <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
                   Prompt Library v2
                 </h1>
-                <div className="text-sm text-gray-500">Modern prompts for engineering teams</div>
+                <div className="text-sm text-gray-500 dark:text-gray-400">Modern prompts for engineering teams</div>
               </div>
             </div>
+            
             <div className="flex gap-3 items-center">
               <button
                 className={classNames(
@@ -591,7 +601,7 @@ export default function App() {
               </button>
               <ThemeSelector currentTheme={currentTheme} onThemeChange={handleThemeChange} />
               <button
-                className="p-2 rounded-lg text-xl hover:bg-gray-100 transition-colors"
+                className="p-2 rounded-lg text-xl hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
                 title="Toggle dark mode"
                 onClick={() => setDark((d) => !d)}
               >
@@ -599,11 +609,61 @@ export default function App() {
               </button>
             </div>
           </div>
+          
+          {/* Search Bar - Full width row */}
+          <div className="w-full max-w-2xl mx-auto bg-yellow-100 border-2 border-red-500 p-2">
+            <div className="relative">
+              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <svg className="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                </svg>
+              </div>
+              <input
+                type="text"
+                placeholder="Search prompts..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="block w-full pl-10 pr-10 py-3 border border-gray-300 dark:border-gray-600 rounded-lg leading-5 bg-white dark:bg-gray-700 placeholder-gray-500 dark:placeholder-gray-400 text-gray-900 dark:text-white focus:outline-none focus:placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm shadow-sm"
+              />
+              {searchQuery && (
+                <button
+                  onClick={() => setSearchQuery("")}
+                  className="absolute inset-y-0 right-0 pr-3 flex items-center"
+                >
+                  <svg className="h-4 w-4 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              )}
+            </div>
+          </div>
         </div>
       </header>
 
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-6 py-8">
+        {/* Search Results Info */}
+        {searchQuery && (
+          <div className="mb-6 p-4 bg-blue-50 dark:bg-blue-900/30 border border-blue-200 dark:border-blue-800 rounded-lg">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <svg className="h-5 w-5 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                </svg>
+                <span className="text-blue-800 dark:text-blue-200 font-medium">
+                  {filteredPrompts.length} result{filteredPrompts.length !== 1 ? 's' : ''} for "{searchQuery}"
+                </span>
+              </div>
+              <button
+                onClick={() => setSearchQuery("")}
+                className="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-200 text-sm font-medium"
+              >
+                Clear search
+              </button>
+            </div>
+          </div>
+        )}
+
         {/* Tag Filters */}
         <div className="mb-8">
           <div className="flex flex-wrap gap-2">
@@ -659,12 +719,26 @@ export default function App() {
             <div className="text-gray-400 text-6xl mb-4">📝</div>
             <h3 className="text-xl font-medium text-gray-900 mb-2">No prompts found</h3>
             <p className="text-gray-500 mb-6">
-              {filter === "All" 
-                ? "Get started by creating your first prompt" 
-                : `No prompts found with the "${filter}" tag`
-              }
+              {searchQuery ? (
+                <>No prompts match your search for "{searchQuery}"{filter !== "All" ? ` in the "${filter}" category` : ""}</>
+              ) : filter === "All" ? (
+                "Get started by creating your first prompt"
+              ) : (
+                `No prompts found with the "${filter}" tag`
+              )}
             </p>
-            {filter === "All" && (
+            {searchQuery ? (
+              <button
+                className={classNames(
+                  "px-6 py-2 rounded-lg font-medium transition-colors mr-3",
+                  theme.colors.secondary
+                )}
+                onClick={() => setSearchQuery("")}
+              >
+                Clear Search
+              </button>
+            ) : null}
+            {filter === "All" && !searchQuery && (
               <button
                 className={classNames(
                   "px-6 py-2 rounded-lg font-medium transition-colors",

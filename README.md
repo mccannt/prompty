@@ -312,7 +312,7 @@ docker-compose logs frontend
 
 ## 📦 Deployment
 
-### Production Deployment
+### Docker Compose (Recommended for Development)
 
 1. **Clone repository on server**:
    ```bash
@@ -343,6 +343,73 @@ docker-compose logs frontend
        }
    }
    ```
+
+### Kubernetes Deployment (Recommended for Production)
+
+For scalable, production-ready deployment on Kubernetes:
+
+#### Prerequisites
+- **kubectl**: Kubernetes command-line tool
+- **Local Kubernetes cluster**: Docker Desktop, minikube, or kind
+- **Docker**: For building container images
+
+#### Quick Deploy
+```bash
+# Deploy to Kubernetes with automated script
+./k8s/deploy-k8s.sh
+```
+
+#### Manual Deploy
+```bash
+# Build images
+docker build -t prompty-backend:latest -f backend/Dockerfile backend/
+docker build -t prompty-frontend:latest -f frontend/Dockerfile frontend/
+
+# Load images (for local clusters)
+minikube image load prompty-backend:latest
+minikube image load prompty-frontend:latest
+
+# Deploy all resources
+kubectl apply -k k8s/
+
+# Wait for deployment
+kubectl wait --for=condition=available --timeout=300s deployment/prompty-backend -n prompty
+```
+
+#### Access the Application
+- **With Ingress**: http://prompty.local (add `127.0.0.1 prompty.local` to `/etc/hosts`)
+- **NodePort**: http://localhost:30080 (or minikube IP:30080)
+- **Port Forward**: `kubectl port-forward service/prompty-nginx 8080:80 -n prompty`
+
+#### Kubernetes Features
+- **High Availability**: Multiple replicas with health checks
+- **Persistent Storage**: SQLite database with PersistentVolume
+- **Load Balancing**: nginx with automatic scaling
+- **Resource Management**: CPU/memory limits and requests
+- **Monitoring**: Built-in health checks and logging
+
+#### Scaling
+```bash
+# Scale backend replicas
+kubectl scale deployment prompty-backend --replicas=3 -n prompty
+
+# Scale frontend replicas  
+kubectl scale deployment prompty-frontend --replicas=2 -n prompty
+```
+
+#### Monitoring
+```bash
+# Check status
+kubectl get pods -n prompty
+
+# View logs
+kubectl logs -f deployment/prompty-backend -n prompty
+
+# Monitor resources
+kubectl top pods -n prompty
+```
+
+**📋 For detailed Kubernetes instructions, see [k8s/README.md](k8s/README.md)**
 
 ### SSL/HTTPS Setup
 

@@ -1,0 +1,89 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: prompty-backend
+  namespace: prompty
+  labels:
+    app: prompty
+    component: backend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: prompty
+      component: backend
+  template:
+    metadata:
+      labels:
+        app: prompty
+        component: backend
+    spec:
+      containers:
+      - name: backend
+        image: prompty-backend:latest
+        imagePullPolicy: Never  # For local development
+        ports:
+        - containerPort: 5000
+          name: http
+        env:
+        - name: NODE_ENV
+          valueFrom:
+            configMapKeyRef:
+              name: prompty-config
+              key: NODE_ENV
+        - name: PORT
+          valueFrom:
+            configMapKeyRef:
+              name: prompty-config
+              key: BACKEND_PORT
+        - name: DATABASE_PATH
+          value: "/app/data/prompts.sqlite"
+        volumeMounts:
+        - name: db-storage
+          mountPath: /app/data
+        livenessProbe:
+          httpGet:
+            path: /api/health
+            port: 5000
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          timeoutSeconds: 5
+          failureThreshold: 3
+        readinessProbe:
+          httpGet:
+            path: /api/health
+            port: 5000
+          initialDelaySeconds: 5
+          periodSeconds: 5
+          timeoutSeconds: 3
+          failureThreshold: 3
+        resources:
+          requests:
+            memory: "128Mi"
+            cpu: "100m"
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+      volumes:
+      - name: db-storage
+        persistentVolumeClaim:
+          claimName: prompty-db-pvc
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: prompty-backend
+  namespace: prompty
+  labels:
+    app: prompty
+    component: backend
+spec:
+  selector:
+    app: prompty
+    component: backend
+  ports:
+  - name: http
+    port: 5000
+    targetPort: 5000
+    protocol: TCP
+  type: ClusterIP 
