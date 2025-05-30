@@ -305,4 +305,12 @@ k8s/*.secret.yml
 charts/
 
 # Container registry credentials
-.docker/config.json 
+.docker/config.json
+
+# Database exports (can be regenerated)
+database-export.sql
+database-export.json
+database-backup-*.sqlite
+*.sql
+database-export-*.json
+database-backup-*.json 
